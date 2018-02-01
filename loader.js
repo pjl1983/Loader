@@ -7,6 +7,7 @@ var angle = 0;
 var canvasX = 250;
 var canvasY = 200;
 var radius = 10;
+var size;
 var fps = 100;
 
 function randomColor() {
@@ -23,7 +24,7 @@ function draw(x, y) {
 	ctx.strokeStyle = color;
 	ctx.save();
 	ctx.beginPath();
-	ctx.arc(x - 1, y - 1 / 2, 10, 0, 2 * Math.PI);
+	ctx.arc(x - 1, y - 1 / 2, size, 0, 2 * Math.PI);
 	ctx.stroke();
 	ctx.fill();
 	ctx.stroke();
