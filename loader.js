@@ -1,5 +1,7 @@
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
+ctx.canvas.width  = window.innerWidth;
+ctx.canvas.height = window.innerHeight;
 var width = canvas.width;
 var height = canvas.height;
 var canvasX = width / 2;
@@ -84,12 +86,15 @@ function drawMinutes(x, y) {
 	ctx.save();
 	ctx.beginPath();
 	ctx.arc(x - 1, y - 1 / 2, sizeMinutes, 0, 2 * Math.PI);
+
 	ctx.stroke();
 	ctx.fill();
 	ctx.stroke();
 	ctx.font = "25px Courier New";
 	ctx.fillStyle = "white";
 	minutes < 10 ? ctx.fillText(minutes, x - 8, y + 8) : ctx.fillText(minutes, x - 15.5, y + 8);
+
+
 	ctx.restore();
 }
 
@@ -97,14 +102,16 @@ function drawHours(x, y) {
 	if (minutes === 0 && seconds === 0) {
 		hoursColor = randomColor();
 	}
+
 	var timeHours;
 	if (hours > 12) {
 		timeHours = hours - 12;
-	} else if (hours = 0) {
+	} else if (hours === 0) {
 		timeHours = 12;
 	} else {
-		timeHours = 12;
+		timeHours = hour;
 	}
+
 	ctx.fillStyle = hoursColor;
 	ctx.strokeStyle = 'white';
 	ctx.save();
@@ -123,10 +130,10 @@ function drawTime() {
 	var timeHours;
 	if (hours > 12) {
 		timeHours = hours - 12;
-	} else if (hours = 0) {
+	} else if (hours === 0) {
 		timeHours = 12;
 	} else {
-		timeHours = 12;
+		timeHours = hour;
 	}
 
 	timeMinutes = minutes < 10 ? '0' + minutes : minutes;
@@ -176,6 +183,8 @@ function animate() {
 		}
 
 		init = true;
+
+
 		drawSeconds(secondsX, secondsY);
 		drawMinutes(minutesX, minutesY);
 		drawHours(hoursX, hoursY);
