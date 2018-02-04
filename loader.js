@@ -2,33 +2,42 @@ var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 var width = canvas.width;
 var height = canvas.height;
-var canvasX = 400;
-var canvasY = 400;
-var fps = 250;
+var canvasX = width / 2;
+var canvasY = height / 2;
+var fps = 1000;
+var init = false;
 
 
 // Seconds
+var seconds = new Date().getSeconds() + 1;
+var secondsColor = randomColor();
 var distanceSeconds = 32;
-var angleSeconds = 4.7;
-var radiusSeconds = 305.8;
+var angleSeconds = 4.61 + (seconds * .10475);
+var radiusSeconds = 305.7;
 var sizeSeconds = 15;
-var seconds = 1;
+
 
 // Minutes
-var distanceMinutes = 33;
-var angleMinutes = 4.70;
-var radiusMinutes = 158;
-var sizeMinutes = 15;
-var minutes = 1;
+var minutes = new Date().getMinutes();
+var minutesColor = randomColor();
+var distanceMinutes = 51.22;
+var angleMinutes = 4.71 + (minutes * .10475);
+var radiusMinutes = 245;
+var sizeMinutes = 25;
+
 
 // Hours
-var distanceHours = 42;
-var angleHours = 4.7;
-var radiusHours = 81;
-var sizeHours = 20;
-var hours = 1;
+var hour = new Date().getHours();
+var hours = hour > 12 ? hour - 12 : hour;
+var hoursColor = randomColor();
+var distanceHours = 84;
+var angleHours = 4.71 + (hours * .471);
+var radiusHours = 162.3;
+var sizeHours = 40;
 
-
+var time = hours + ':' + minutes;
+var x = canvasX - (ctx.measureText(time).width / 2);
+var y = canvasY - 25;
 
 function randomColor() {
 	var r = 255 * Math.random() | 0,
@@ -37,10 +46,22 @@ function randomColor() {
 	return 'rgb(' + r + ',' + g + ',' + b + ')';
 }
 
+function counter() {
+	seconds = seconds !== 59 ? seconds + 1 : seconds = 0;
+	if (seconds === 0) {
+		minutes = minutes !== 59 ? minutes + 1 : minutes = 0;
+	}
+
+	if (minutes === 0 && seconds === 0) {
+		hours = hours !== 12 ? hours + 1 : hours = 1;
+	}
+
+}
+
 function drawSeconds(x, y) {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	var color = randomColor();
-	ctx.fillStyle = color;
+	secondsColor = randomColor();
+	ctx.fillStyle = secondsColor;
 	ctx.strokeStyle = 'white';
 	ctx.save();
 	ctx.beginPath();
@@ -48,18 +69,17 @@ function drawSeconds(x, y) {
 	ctx.stroke();
 	ctx.fill();
 	ctx.stroke();
-	ctx.font = "15px Arial";
+	ctx.font = "15px Courier New";
 	ctx.fillStyle = "white";
-	seconds < 10 ? ctx.fillText(seconds ,x - 5.5,y + 5) : ctx.fillText(seconds ,x - 9.5,y + 5);
-	seconds = seconds < 60 ? seconds + 1 : seconds = 1;
+	seconds < 10 ? ctx.fillText(seconds, x - 6.5, y + 4.5) : ctx.fillText(seconds, x - 9.5, y + 4.5);
 	ctx.restore();
 }
 
-
 function drawMinutes(x, y) {
-
-	var color = randomColor();
-	ctx.fillStyle = color;
+	if (seconds === 0) {
+		minutesColor = randomColor();
+	}
+	ctx.fillStyle = minutesColor;
 	ctx.strokeStyle = 'white';
 	ctx.save();
 	ctx.beginPath();
@@ -67,17 +87,17 @@ function drawMinutes(x, y) {
 	ctx.stroke();
 	ctx.fill();
 	ctx.stroke();
-	ctx.font = "15px Arial";
+	ctx.font = "25px Courier New";
 	ctx.fillStyle = "white";
-	minutes < 10 ? ctx.fillText(minutes ,x - 5.5,y + 5) : ctx.fillText(minutes ,x - 9.5,y + 5);
-	minutes = minutes < 60 ? minutes + 1 : minutes = 1;
+	minutes < 10 ? ctx.fillText(minutes, x - 8, y + 8) : ctx.fillText(minutes, x - 15.5, y + 8);
 	ctx.restore();
 }
 
 function drawHours(x, y) {
-
-	var color = randomColor();
-	ctx.fillStyle = color;
+	if (minutes === 0 && seconds === 0) {
+		hoursColor = randomColor();
+	}
+	ctx.fillStyle = hoursColor;
 	ctx.strokeStyle = 'white';
 	ctx.save();
 	ctx.beginPath();
@@ -85,22 +105,22 @@ function drawHours(x, y) {
 	ctx.stroke();
 	ctx.fill();
 	ctx.stroke();
-	ctx.font = "15px Arial";
+	ctx.font = "45px Courier New";
 	ctx.fillStyle = "white";
-	hours < 10 ? ctx.fillText(hours ,x - 5.5,y + 5) : ctx.fillText(hours ,x - 9.5,y + 5);
-	hours = hours < 12 ? hours + 1 : hours = 1;
-
-//     ctx.strokeStyle = 'black';
-//     ctx.beginPath();
-//     ctx.moveTo(400, 0);
-//     ctx.lineTo(400, 800);
-//     ctx.stroke();
-
+	hours < 10 ? ctx.fillText(hours, x - 14.5, y + 14) : ctx.fillText(hours, x - 27.5, y + 14);
 	ctx.restore();
-
-
 }
 
+function drawTime() {
+	hours = hours > 12 ? hours - 12 : hours;
+	minutes = minutes < 10 ? '0' + minutes : minutes;
+	time = hours + ':' + minutes;
+	ctx.stroke();
+	ctx.font = "50px Courier New";
+	ctx.fillStyle = "black";
+	ctx.fillText(time, x, y);
+	ctx.restore();
+}
 
 window.requestAnimFrame = (function (callback) {
 	return window.requestAnimationFrame ||
@@ -121,22 +141,33 @@ function animate() {
 		var secondsX = canvasX + radiusSeconds * Math.cos(angleSeconds);
 		var secondsY = canvasY + radiusSeconds * Math.sin(angleSeconds);
 
-		angleMinutes += Math.acos(1 - Math.pow(distanceMinutes / radiusMinutes, 2) / 2);
-		var minutesX = canvasX + radiusMinutes * Math.cos(angleMinutes);
-		var minutesY = canvasY + radiusMinutes * Math.sin(angleMinutes);
+		if (seconds === 0 && minutes % 2 === 0 && init === true) {
+			angleMinutes += Math.acos(1 - Math.pow(distanceMinutes / radiusMinutes, 2) / 2);
+			var minutesX = canvasX + radiusMinutes * Math.cos(angleMinutes);
+			var minutesY = canvasY + radiusMinutes * Math.sin(angleMinutes);
+		} else {
+			var minutesX = canvasX + radiusMinutes * Math.cos(angleMinutes);
+			var minutesY = canvasY + radiusMinutes * Math.sin(angleMinutes);
+		}
 
+		if (minutes === 0 && seconds === 0 && init === true) {
+			angleHours += Math.acos(1 - Math.pow(distanceHours / radiusHours, 2) / 2);
+			var hoursX = canvasX + radiusHours * Math.cos(angleHours);
+			var hoursY = canvasY + radiusHours * Math.sin(angleHours);
+		} else {
+			var hoursX = canvasX + radiusHours * Math.cos(angleHours);
+			var hoursY = canvasY + radiusHours * Math.sin(angleHours);
+		}
 
-		angleHours += Math.acos(1 - Math.pow(distanceHours / radiusHours, 2) / 2);
-		var hoursX = canvasX + radiusHours * Math.cos(angleHours);
-		var hoursY = canvasY + radiusHours * Math.sin(angleHours);
-
+		init = true;
 		drawSeconds(secondsX, secondsY);
 		drawMinutes(minutesX, minutesY);
 		drawHours(hoursX, hoursY);
-
+		drawTime();
 		ctx.beginPath();
 		ctx.closePath();
 		ctx.stroke();
+		counter();
 	}, fps);
 }
 
