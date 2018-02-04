@@ -97,6 +97,14 @@ function drawHours(x, y) {
 	if (minutes === 0 && seconds === 0) {
 		hoursColor = randomColor();
 	}
+	var timeHours;
+	if (hours > 12) {
+		timeHours = hours - 12;
+	} else if (hours = 0) {
+		timeHours = 12;
+	} else {
+		timeHours = 12;
+	}
 	ctx.fillStyle = hoursColor;
 	ctx.strokeStyle = 'white';
 	ctx.save();
@@ -107,18 +115,26 @@ function drawHours(x, y) {
 	ctx.stroke();
 	ctx.font = "45px Courier New";
 	ctx.fillStyle = "white";
-	hours < 10 ? ctx.fillText(hours, x - 14.5, y + 14) : ctx.fillText(hours, x - 27.5, y + 14);
+	timeHours < 10 ? ctx.fillText(timeHours, x - 14.5, y + 14) : ctx.fillText(timeHours, x - 27.5, y + 14);
 	ctx.restore();
 }
 
 function drawTime() {
-	hours = hours > 12 ? hours - 12 : hours;
-	minutes = minutes < 10 ? '0' + minutes : minutes;
-	time = hours + ':' + minutes;
+	var timeHours;
+	if (hours > 12) {
+		timeHours = hours - 12;
+	} else if (hours = 0) {
+		timeHours = 12;
+	} else {
+		timeHours = 12;
+	}
+
+	timeMinutes = minutes < 10 ? '0' + minutes : minutes;
+	displayTime = timeHours + ':' + timeMinutes;
 	ctx.stroke();
 	ctx.font = "50px Courier New";
 	ctx.fillStyle = "black";
-	ctx.fillText(time, x, y);
+	ctx.fillText(displayTime, x, y);
 	ctx.restore();
 }
 
